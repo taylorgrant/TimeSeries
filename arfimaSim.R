@@ -1,5 +1,6 @@
 ```
 arfimaSim <- function(n, d, p=NULL, q=NULL) {
+  require(signal)
   # creates a fractionally integrated (p,d,q) process of length n (extends to (1,d,1))
   # d: fractional differencing parameter (e.g. d=.4, produces series that FI(.4)
   # p: value of AR parameter
