@@ -1,1 +1,1 @@
-Functions and scripts for time series analysis. Primarily looking at fractional integration. 
+Functions and scripts for time series analysis. Primarily interested in fractional integration. 
