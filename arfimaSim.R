@@ -5,7 +5,7 @@ arfimaSim <- function(n, d, p=NULL, q=NULL) {
   # d: fractional differencing parameter (e.g. d=.4, produces series that FI(.4)
   # p: value of AR parameter
   # q: value of MA
-  #
+  ##
   x <- rnorm(n)
   d <- -d
   n <- length(x)
