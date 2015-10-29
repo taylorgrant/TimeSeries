@@ -4,7 +4,7 @@
 # of rejecting the null hypothesis. 
 # DF null: unit root
 # KPSS null: stationarity
-# NOTE: 1000 MC is slow b/c of for loops
+# NOTE: 1000 MC is slow b/c of for loops 
 # ------------------------------------- #
 
 source("arfimaSim.R")
