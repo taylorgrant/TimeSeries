@@ -12,7 +12,7 @@ selectBIC <- function(x) {
     name[i] <- paste("(", n_params[i,1],",", "d",",", n_params[i,2], ")", sep="")
     }
   
-  ans <- which.min(abs(sel_bic))
+  ans <- which.max(sel_bic)
   out <- data.frame(BIC = round(sel_bic, 4))
   row.names(out) <- name
   print(out)
