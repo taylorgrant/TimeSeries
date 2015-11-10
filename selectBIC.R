@@ -1,5 +1,7 @@
 selectBIC <- function(x) {
 ## BIC selection for the whittleFML estimator
+## note selectBIC differences the variable
+## by default. whittleFML does not...
   n_params <- expand.grid(p=0:1, q=0:1)
   sel_bic <- rep(0, nrow(n_params))
   name <- rep(0, nrow(n_params))
