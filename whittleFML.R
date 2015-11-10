@@ -14,7 +14,7 @@
 ## covariance functions of FI and ARMA series 
 ## and mix. 
 ## 
-## Borrowed (and adapted) from Vennstra and McLeod: 
+## Borrowed (and adapted) from Veenstra and McLeod: 
 ## Veenstra, J. and McLeod, A. I. (Working Paper):
 ## The arfima R package: Exact Methods for Hyperbolic 
 ## Decay Time Series
