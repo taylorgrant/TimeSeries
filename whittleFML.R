@@ -14,10 +14,10 @@
 ## covariance functions of FI and ARMA series 
 ## and mix. 
 ## 
-## Borrowed (some adapted) from Vennstra and McLeod: 
+## Borrowed (and adapted) from Vennstra and McLeod: 
 ## Veenstra, J. and McLeod, A. I. (Working Paper):
-## The arfima R package: Exact Methods for 
-## Hyperbolic Decay Time Series
+## The arfima R package: Exact Methods for Hyperbolic 
+## Decay Time Series
 # ------------------------------------------ # 
 tacvfARFIMA <-function(phi, theta, d, maxlag) {
   x <- tacvfFD(d = d, maxlag = maxlag)
@@ -241,12 +241,12 @@ whittleFML <- function(x, p, q, n=length(x),
   
   ## MLE method depends on number of parameters to estimate
   if(n.params == 1) { # one dimensional - ARFIMA (0,d,0) 
-    result <- optim(par = params, fn = FMLwrap, lower = -5, upper = 5,
+    result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = 1.99,
                     method = "Brent", hessian = TRUE)
     params <- c(d = result$par)
   } 
   else { # ARFIMA (p,d,q)
-    result <- optim(par = params, fn = FMLwrap, lower = -5, upper = 5, 
+    result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = 1.99, 
                     method = "L-BFGS-B", hessian = TRUE)
     params <- result$par
   }
