@@ -241,12 +241,12 @@ whittleFML <- function(x, p, q, n=length(x),
   
   ## MLE method depends on number of parameters to estimate
   if(n.params == 1) { # one dimensional - ARFIMA (0,d,0) 
-    result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = 1.99,
+    result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = .99,
                     method = "Brent", hessian = TRUE)
     params <- c(d = result$par)
   } 
   else { # ARFIMA (p,d,q)
-    result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = 1.99, 
+    result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = .99, 
                     method = "L-BFGS-B", hessian = TRUE)
     params <- result$par
   }
