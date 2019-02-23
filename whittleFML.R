@@ -300,7 +300,7 @@ whittleFML <- function(x, p, q, n=length(x),
   res <- DLResiduals(rr, x)
   
   ## output results
-  print(list(coef, IC))
+  #print(list(coef, IC))
   
   ## save results as list 
   whit.result <- list(n = n, p=p, q=q,
