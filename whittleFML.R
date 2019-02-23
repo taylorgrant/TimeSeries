@@ -306,7 +306,7 @@ whittleFML <- function(x, p, q, n=length(x),
   whit.result <- list(n = n, p=p, q=q,
                       coefficients = coef, vcov = Vcov,
                       IC = IC, In = In, sif = whittle$sif,
-                      rr = rr, res = res) 
+                      rr = rr, residuals = res) 
 }
 
 
