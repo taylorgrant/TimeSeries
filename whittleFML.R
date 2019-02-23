@@ -28,72 +28,72 @@ tacvfARFIMA <-function(phi, theta, d, maxlag) {
 
 ## autocovariance of ARMA part
 tacvfARMA <- function(phi, theta, maxlag) {
-    p <- length(phi)
-    q <- length(theta)
-    maxlagp1 <- maxlag + 1
-    
-    if(max(p, q) == 0) {
-      return(c(numeric(maxlag)))
+  p <- length(phi)
+  q <- length(theta)
+  maxlagp1 <- maxlag + 1
+  
+  if(max(p, q) == 0) {
+    return(c(numeric(maxlag)))
+  }
+  r <- max(p, q) + 1
+  b <- numeric(r)
+  C <- numeric(q + 1)
+  
+  C[1] <- 1
+  theta2 <- c(-1, theta)
+  phi2 <- numeric(3 * r)
+  phi2[r] <- -1
+  if(p > 0) {
+    phi2[r + 1:p] <- phi
+  }
+  if(q > 0) {
+    for(k in 1:q) {
+      C[k + 1] <- - theta[k]
+      if(p > 0) {
+        for(i in 1:min(p, k)) {
+          C[k + 1] <- C[k + 1] + phi[i] * C[k + 1 - i]
+        }
+      }
     }
-    r <- max(p, q) + 1
-    b <- numeric(r)
-    C <- numeric(q + 1)
-    
-    C[1] <- 1
-    theta2 <- c(-1, theta)
-    phi2 <- numeric(3 * r)
-    phi2[r] <- -1
-    if(p > 0) {
-      phi2[r + 1:p] <- phi
+  }
+  
+  for(k in 0:q) {
+    for(i in k:q) {
+      b[k + 1] <- b[k + 1] - theta2[i + 1] * C[i - k + 1]
     }
-    if(q > 0) {
-      for(k in 1:q) {
-        C[k + 1] <- - theta[k]
-        if(p > 0) {
-          for(i in 1:min(p, k)) {
-            C[k + 1] <- C[k + 1] + phi[i] * C[k + 1 - i]
-          }
+  }
+  
+  if(p == 0) {
+    g   <-   c(b, numeric(maxlagp1))[1:maxlagp1]
+    return(g)
+  }
+  else if(p > 0) {
+    a <- matrix(numeric(r^2), ncol = r)
+    for(i in 1:r) {
+      for(j in 1:r) {
+        if(j == 1) {
+          a[i, j] <- phi2[r + i - 1]
+        }
+        else if(j != 1) {
+          a[i, j] <- phi2[r + i - j] + phi2[r + i + j - 2]
         }
       }
     }
     
-    for(k in 0:q) {
-      for(i in k:q) {
-        b[k + 1] <- b[k + 1] - theta2[i + 1] * C[i - k + 1]
-      }
-    }
+    g   <-   solve(a,  - b)
     
-    if(p == 0) {
-      g   <-   c(b, numeric(maxlagp1))[1:maxlagp1]
-      return(g)
-    }
-    else if(p > 0) {
-      a <- matrix(numeric(r^2), ncol = r)
-      for(i in 1:r) {
-        for(j in 1:r) {
-          if(j == 1) {
-            a[i, j] <- phi2[r + i - 1]
-          }
-          else if(j != 1) {
-            a[i, j] <- phi2[r + i - j] + phi2[r + i + j - 2]
-          }
-        }
-      }
+    if(length(g) <= maxlag) {
+      g <- c(g, numeric(maxlagp1 - r)) 
       
-      g   <-   solve(a,  - b)
-      
-      if(length(g) <= maxlag) {
-        g <- c(g, numeric(maxlagp1 - r)) 
-        
-        for(i in (r + 1):maxlagp1) {
-          g[i] <- phi %*% g[i - 1:p]
-        }
-        return(g[1:maxlagp1])
+      for(i in (r + 1):maxlagp1) {
+        g[i] <- phi %*% g[i - 1:p]
       }
-      else if(length(g) >= maxlagp1) {
-        return(g[1:maxlagp1])
-      }
+      return(g[1:maxlagp1])
     }
+    else if(length(g) >= maxlagp1) {
+      return(g[1:maxlagp1])
+    }
+  }
 }
 
 ## autocovariance of ARFIMA (0,d,0)
@@ -116,26 +116,26 @@ mix <- function(x, y) {
 
 ## calculate residuals
 DLResiduals <- function(r,z) {
-    n <- length(z)
-    error <- numeric(n)
-    sigmasq <- numeric(n)
-    error[1] <- z[1]
-    sigmasq[1] <- r[1]
-    phi <- r[2]/r[1]
-    error[2] <- z[2] - phi * z[1]
-    sigmasqkm1 <- r[1] * (1 - phi^2)
-    sigmasq[2] <- sigmasqkm1
-    for(k in 2:(n - 1)) {
-      phikk <- (r[k + 1] - phi %*% rev(r[2:k]))/sigmasqkm1
-      sigmasqk <- sigmasqkm1 * (1 - phikk^2)
-      phinew <- phi - phikk * rev(phi)
-      phi <- c(phinew, phikk)
-      sigmasqkm1 <- sigmasqk
-      error[k + 1] <- z[k + 1] - crossprod(phi, rev(z[1:k]))
-      sigmasq[k + 1] <- sigmasqk
-    }
-    res<-error
-    res 
+  n <- length(z)
+  error <- numeric(n)
+  sigmasq <- numeric(n)
+  error[1] <- z[1]
+  sigmasq[1] <- r[1]
+  phi <- r[2]/r[1]
+  error[2] <- z[2] - phi * z[1]
+  sigmasqkm1 <- r[1] * (1 - phi^2)
+  sigmasq[2] <- sigmasqkm1
+  for(k in 2:(n - 1)) {
+    phikk <- (r[k + 1] - phi %*% rev(r[2:k]))/sigmasqkm1
+    sigmasqk <- sigmasqkm1 * (1 - phikk^2)
+    phinew <- phi - phikk * rev(phi)
+    phi <- c(phinew, phikk)
+    sigmasqkm1 <- sigmasqk
+    error[k + 1] <- z[k + 1] - crossprod(phi, rev(z[1:k]))
+    sigmasq[k + 1] <- sigmasqk
+  }
+  res<-error
+  res 
 }
 
 
@@ -240,7 +240,7 @@ whittleFML <- function(x, p, q, n=length(x),
   }
   
   ## MLE method depends on number of parameters to estimate
-  if(n.params == 1) { # one dimensional - ARFIMA (0,d,0) 
+  if (n.params == 1) { # one dimensional - ARFIMA (0,d,0) 
     result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = .99,
                     method = "Brent", hessian = TRUE)
     params <- c(d = result$par)
@@ -248,28 +248,34 @@ whittleFML <- function(x, p, q, n=length(x),
   else { # ARFIMA (p,d,q)
     result <- optim(par = params, fn = FMLwrap, lower = -.99, upper = .99, 
                     method = "L-BFGS-B", hessian = TRUE)
-    params <- result$par
+    if (is.null(names(result$par) == "MA")) {
+      params <- result$par
+    } else {
+      params <- result$par
+      params[which(names(params) == "MA")] <- params[which(names(params) == "MA")]*-1
+    }
+    
   }
   
   ## Estimated Results
   whittle <- whitFunc(params, n, In, pq)
   
   if  (pq[1] == 0 && pq[2] == 0) {
-        phi <- 0     
-        theta <- 0
-      }
-      else if (pq[1] == 0 && pq[2] != 0) { 
-        theta = params[2:(sum(pq)+1)]
-        phi = 0
-      }
-      else if (pq[1] != 0 && pq[2] != 0) {
-        phi = params[2:(2+pq[1]-1)]
-        theta = params[(2+pq[1]):(sum(pq)+1)]
-      }
-      else if (pq[1] != 0 && pq[2] == 0) {
-        phi = params[2:2+pq[1]-1]
-        theta = 0;       
-      }
+    phi <- 0     
+    theta <- 0
+  }
+  else if (pq[1] == 0 && pq[2] != 0) { 
+    theta = params[2:(sum(pq)+1)]
+    phi = 0
+  }
+  else if (pq[1] != 0 && pq[2] != 0) {
+    phi = params[2:(2+pq[1]-1)]
+    theta = params[(2+pq[1]):(sum(pq)+1)]
+  }
+  else if (pq[1] != 0 && pq[2] == 0) {
+    phi = params[2:2+pq[1]-1]
+    theta = 0;       
+  }
   d <- params[1]
   
   Vcov <- solve(result$hessian)
